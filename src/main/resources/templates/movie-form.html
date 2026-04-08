@@ -2,45 +2,48 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Add Movie</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    <div class="container">
+        <h1>Add Movie</h1>
 
-<h1>Add Movie</h1>
+        <form th:action="@{/movies/save}" th:object="${movie}" method="post">
+            <input type="hidden" th:field="*{id}">
 
-<a href="/movies/add">Add new movie</a>
-<td><a th:href="@{/movies/delete/{id}(id=${movie.id})}">Delete</a></td>
+            <div>
+                <label>Title</label>
+                <input type="text" th:field="*{title}">
+                <div class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+            </div>
 
-<form th:action="@{/movies/save}" th:object="${movie}" method="post">
-    <div>
-        <label>Title</label>
-        <input type="text" th:field="*{title}">
+            <div>
+                <label>Director</label>
+                <input type="text" th:field="*{director}">
+                <div class="error" th:if="${#fields.hasErrors('director')}" th:errors="*{director}"></div>
+            </div>
+
+            <div>
+                <label>Release Year</label>
+                <input type="number" th:field="*{releaseYear}">
+                <div class="error" th:if="${#fields.hasErrors('releaseYear')}" th:errors="*{releaseYear}"></div>
+            </div>
+
+            <div>
+                <label>Genre</label>
+                <select th:field="*{genre}">
+                    <option th:each="genre : ${genres}"
+                            th:value="${genre.id}"
+                            th:text="${genre.name}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="button">Save</button>
+                <a href="/movies" class="button">Back</a>
+            </div>
+        </form>
     </div>
-
-    <div>
-        <label>Director</label>
-        <input type="text" th:field="*{director}">
-    </div>
-
-    <div>
-        <label>Release Year</label>
-        <input type="number" th:field="*{releaseYear}">
-    </div>
-
-    <div>
-        <label>Genre</label>
-        <select th:field="*{genre}">
-            <option th:each="genre : ${genres}"
-                    th:value="${genre.id}"
-                    th:text="${genre.name}">
-            </option>
-        </select>
-    </div>
-
-    <button type="submit">Save</button>
-</form>
-
-<br>
-<a href="/movies">Back to movie list</a>
-
 </body>
 </html>

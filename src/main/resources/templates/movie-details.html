@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Movie Details</title>
+</head>
+<body>
+
+<h1 th:text="${movie.title}">Movie Title</h1>
+
+<p>
+    <strong>Director:</strong>
+    <span th:text="${movie.director}"></span>
+</p>
+
+<p>
+    <strong>Year:</strong>
+    <span th:text="${movie.releaseYear}"></span>
+</p>
+
+<p>
+    <strong>Genre:</strong>
+    <span th:text="${movie.genre.name}"></span>
+</p>
+
+<hr>
+
+<h2>Reviews</h2>
+
+<table border="1">
+    <tr>
+        <th>User</th>
+        <th>Rating</th>
+        <th>Comment</th>
+    </tr>
+
+    <tr th:each="review : ${reviews}">
+        <td>
+            <span th:if="${review.user != null}" th:text="${review.user.username}">username</span>
+            <span th:if="${review.user == null}">Unknown user</span>
+        </td>
+        <td th:text="${review.rating}">5</td>
+        <td th:text="${review.comment}">Great movie!</td>
+    </tr>
+</table>
+
+<br>
+<a th:href="@{/movies/{id}/reviews/add(id=${movie.id})}">Add Review</a>
+
+<br><br>
+<a href="/movies">Back to movie list</a>
+
+</body>
+</html>

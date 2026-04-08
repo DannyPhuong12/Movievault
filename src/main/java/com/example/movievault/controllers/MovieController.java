@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.example.movievault.domain.Genre;
 import com.example.movievault.domain.Movie;
 import com.example.movievault.repository.GenreRepository;
 import com.example.movievault.repository.MovieRepository;
+import com.example.movievault.repository.ReviewRepository;
 
 import jakarta.validation.Valid;
 
@@ -19,10 +21,15 @@ public class MovieController {
 
     private final MovieRepository movieRepository;
     private final GenreRepository genreRepository;
+    private final ReviewRepository reviewRepository;
+    private Genre drama;
 
-    public MovieController(MovieRepository movieRepository, GenreRepository genreRepository) {
+    public MovieController(MovieRepository movieRepository,
+                           GenreRepository genreRepository,
+                           ReviewRepository reviewRepository) {
         this.movieRepository = movieRepository;
         this.genreRepository = genreRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @GetMapping("/")
@@ -38,7 +45,7 @@ public class MovieController {
 
     @GetMapping("/movies/add")
     public String showAddMovieForm(Model model) {
-        model.addAttribute("movie", new Movie());
+        model.addAttribute("movie", new Movie("Interstellar", "Christopher Nolan", 2014, drama));
         model.addAttribute("genres", genreRepository.findAll());
         return "movie-form";
     }
@@ -67,5 +74,20 @@ public class MovieController {
     public String deleteMovie(@PathVariable("id") Long id) {
         movieRepository.deleteById(id);
         return "redirect:/movies";
+    }
+
+    @GetMapping("/movies/{id}")
+    public String showMovieDetails(@PathVariable("id") Long id, Model model) {
+        Movie movie = movieRepository.findById(id).orElseThrow();
+        model.addAttribute("movie", movie);
+        model.addAttribute("reviews", reviewRepository.findByMovieId(id));
+        return "movie-details";
+    }
+
+    @GetMapping("/genres/{id}/movies")
+    public String getMoviesByGenre(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("movies", movieRepository.findByGenreId(id));
+        model.addAttribute("selectedGenreId", id);
+        return "movie-list";
     }
 }

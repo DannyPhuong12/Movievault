@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Review</title>
+</head>
+<body>
+
+<h1>Add Review</h1>
+<h2 th:text="${movie.title}">Movie</h2>
+
+<form th:action="@{/reviews/save}" th:object="${review}" method="post">
+
+    <input type="hidden" th:field="*{id}">
+    <input type="hidden" th:field="*{movie.id}">
+
+    <div>
+        <label>Rating (1-5)</label>
+        <input type="number" th:field="*{rating}">
+        <div th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
+    </div>
+
+    <div>
+        <label>Comment</label>
+        <textarea th:field="*{comment}"></textarea>
+        <div th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
+    </div>
+
+    <button type="submit">Save review</button>
+</form>
+
+<br>
+<a th:href="@{/movies/{id}(id=${movie.id})}">Back to movie details</a>
+
+</body>
+</html>

@@ -4,10 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Movie {
@@ -16,27 +12,17 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Title is required")
     private String title;
-
-    @NotBlank(message = "Director is required")
     private String director;
+    private Integer year;
 
-    @Min(value = 1888, message = "Release year must be at least 1888")
-    @Max(value = 2100, message = "Release year must be at most 2100")
-    private int releaseYear;
-
-    @ManyToOne
-    private Genre genre;
-
-    public Movie() {
+    public Movie(String interstellar, String christopher_Nolan, int par, Genre drama) {
     }
 
-    public Movie(String title, String director, int releaseYear, Genre genre) {
+    public Movie(String title, String director, Integer year) {
         this.title = title;
         this.director = director;
-        this.releaseYear = releaseYear;
-        this.genre = genre;
+        this.year = year;
     }
 
     public Long getId() {
@@ -59,19 +45,11 @@ public class Movie {
         this.director = director;
     }
 
-    public int getReleaseYear() {
-        return releaseYear;
+    public Integer getYear() {
+        return year;
     }
 
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public void setGenre(Genre genre) {
-        this.genre = genre;
+    public void setYear(Integer year) {
+        this.year = year;
     }
 }

@@ -1,39 +1,43 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="#{movie.list.title}">Movie List</title>
+    <title>Movies</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    <div class="container">
+        <div class="nav">
+            <a href="/movies">Movies</a>
+            <a href="/genres">Genres</a>
+        </div>
 
-<a th:href="@{/movies(lang='fi')}" th:text="#{lang.fi}">Suomi</a> |
-<a th:href="@{/movies(lang='en')}" th:text="#{lang.en}">English</a>
+        <h1>Movie List</h1>
 
-<h1 th:text="#{movie.list.title}">Movie List</h1>
+        <div class="actions">
+            <a href="/movies/add" class="button">Add new movie</a>
+        </div>
 
-<a href="/movies/add" th:text="#{movie.add}">Add movie</a>
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Director</th>
+                <th>Year</th>
+                <th>Genre</th>
+                <th>Details</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
 
-<table border="1">
-    <tr>
-        <th th:text="#{movie.title}">Title</th>
-        <th th:text="#{movie.director}">Director</th>
-        <th th:text="#{movie.year}">Release Year</th>
-        <th th:text="#{movie.genre}">Genre</th>
-        <th th:text="#{button.edit}">Edit</th>
-        <th th:text="#{button.delete}">Delete</th>
-    </tr>
-
-    <tr th:each="movie : ${movies}">
-        <td th:text="${movie.title}"></td>
-        <td th:text="${movie.director}"></td>
-        <td th:text="${movie.releaseYear}"></td>
-        <td th:text="${movie.genre.name}"></td>
-        <td><a th:href="@{/movies/edit/{id}(id=${movie.id})}" th:text="#{button.edit}">Edit</a></td>
-        <td><a th:href="@{/movies/delete/{id}(id=${movie.id})}" th:text="#{button.delete}">Delete</a></td>
-    </tr>
-</table>
-
-<br>
-<a href="/genres" th:text="#{nav.genres}">Genres</a>
-
+            <tr th:each="movie : ${movies}">
+                <td th:text="${movie.title}"></td>
+                <td th:text="${movie.director}"></td>
+                <td th:text="${movie.releaseYear}"></td>
+                <td th:text="${movie.genre.name}"></td>
+                <td><a th:href="@{/movies/{id}(id=${movie.id})}">Details</a></td>
+                <td><a th:href="@{/movies/edit/{id}(id=${movie.id})}">Edit</a></td>
+                <td><a th:href="@{/movies/delete/{id}(id=${movie.id})}" class="button button-danger">Delete</a></td>
+            </tr>
+        </table>
+    </div>
 </body>
 </html>

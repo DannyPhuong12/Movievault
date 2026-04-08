@@ -13,17 +13,14 @@
 <a href="/genres/add" th:text="#{genre.add}">Add genre</a>
 
 <table border="1">
-    <tr>
-        <th th:text="#{genre.name}">Name</th>
-        <th th:text="#{button.edit}">Edit</th>
-        <th th:text="#{button.delete}">Delete</th>
-    </tr>
-
     <tr th:each="genre : ${genres}">
-        <td th:text="${genre.name}"></td>
-        <td><a th:href="@{/genres/edit/{id}(id=${genre.id})}" th:text="#{button.edit}">Edit</a></td>
-        <td><a th:href="@{/genres/delete/{id}(id=${genre.id})}" th:text="#{button.delete}">Delete</a></td>
-    </tr>
+    <td>
+        <a th:href="@{/genres/{id}/movies(id=${genre.id})}"
+           th:text="${genre.name}">Genre</a>
+    </td>
+    <td><a th:href="@{/genres/edit/{id}(id=${genre.id})}">Edit</a></td>
+    <td><a th:href="@{/genres/delete/{id}(id=${genre.id})}">Delete</a></td>
+</tr>
 </table>
 
 <br>
