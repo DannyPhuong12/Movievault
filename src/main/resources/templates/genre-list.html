@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{genre.list.title}">Genres</title>
+</head>
+<body>
+
+<a th:href="@{/genres(lang='fi')}" th:text="#{lang.fi}">Suomi</a> |
+<a th:href="@{/genres(lang='en')}" th:text="#{lang.en}">English</a>
+
+<h1 th:text="#{genre.list.title}">Genre List</h1>
+
+<a href="/genres/add" th:text="#{genre.add}">Add genre</a>
+
+<table border="1">
+    <tr>
+        <th th:text="#{genre.name}">Name</th>
+        <th th:text="#{button.edit}">Edit</th>
+        <th th:text="#{button.delete}">Delete</th>
+    </tr>
+
+    <tr th:each="genre : ${genres}">
+        <td th:text="${genre.name}"></td>
+        <td><a th:href="@{/genres/edit/{id}(id=${genre.id})}" th:text="#{button.edit}">Edit</a></td>
+        <td><a th:href="@{/genres/delete/{id}(id=${genre.id})}" th:text="#{button.delete}">Delete</a></td>
+    </tr>
+</table>
+
+<br>
+<a href="/movies" th:text="#{nav.movies}">Movies</a>
+
+</body>
+</html>
