@@ -20,28 +20,35 @@ public class MovievaultApplication {
         SpringApplication.run(MovievaultApplication.class, args);
     }
 
-    @Bean
-    public CommandLineRunner demo(GenreRepository genreRepository,
-                                  MovieRepository movieRepository,
-                                  AppUserRepository appUserRepository,
-                                  PasswordEncoder passwordEncoder) {
-        return (args) -> {
-            if (appUserRepository.findByUsername("user").isEmpty()) {
-                AppUser user = new AppUser("user", passwordEncoder.encode("user123"), "ROLE_USER");
-                AppUser admin = new AppUser("admin", passwordEncoder.encode("admin123"), "ROLE_ADMIN");
+   @Bean
+public CommandLineRunner demo(GenreRepository genreRepository,
+                              MovieRepository movieRepository,
+                              AppUserRepository appUserRepository,
+                              PasswordEncoder passwordEncoder) {
+    return (args) -> {
 
-                appUserRepository.save(user);
-                appUserRepository.save(admin);
+       
+        if (appUserRepository.findByUsername("user").isEmpty()) {
 
-                Genre action = new Genre("Action");
-                Genre drama = new Genre("Drama");
+            AppUser user = new AppUser("user", passwordEncoder.encode("user123"), "ROLE_USER");
+            AppUser admin = new AppUser("admin", passwordEncoder.encode("admin123"), "ROLE_ADMIN");
 
-                genreRepository.save(action);
-                genreRepository.save(drama);
+            appUserRepository.save(user);
+            appUserRepository.save(admin);
+        }
 
-                movieRepository.save(new Movie("Inception", "Christopher Nolan", 2010, action));
-                movieRepository.save(new Movie("Interstellar", "Christopher Nolan", 2014, drama));
-            }
-        };
-    }
+        
+        if (genreRepository.count() == 0) {
+
+            Genre action = new Genre("Action");
+            Genre drama = new Genre("Drama");
+
+            genreRepository.save(action);
+            genreRepository.save(drama);
+
+            movieRepository.save(new Movie("Inception", "Christopher Nolan", 2010, action));
+            movieRepository.save(new Movie("Interstellar", "Christopher Nolan", 2014, drama));
+        }
+    };
+}
 }

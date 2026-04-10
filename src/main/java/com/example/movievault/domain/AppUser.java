@@ -30,6 +30,7 @@ public class AppUser {
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
 
+    
     public AppUser() {
     }
 

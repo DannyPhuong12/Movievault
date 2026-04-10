@@ -86,7 +86,7 @@ public class MovieController {
 
     @GetMapping("/genres/{id}/movies")
     public String getMoviesByGenre(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("movies", movieRepository.findByGenreId(id));
+        model.addAttribute("movies", movieRepository.findByGenre_Id(id));
         model.addAttribute("selectedGenreId", id);
         return "movie-list";
     }

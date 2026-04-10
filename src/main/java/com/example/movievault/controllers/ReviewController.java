@@ -47,22 +47,35 @@ public class ReviewController {
     }
 
     @PostMapping("/reviews/save")
-    public String saveReview(@Valid @ModelAttribute("review") Review review,
-                             BindingResult bindingResult,
-                             Model model,
-                             Principal principal) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("movie", review.getMovie());
-            return "review-form";
-        }
+public String saveReview(@Valid @ModelAttribute("review") Review review,
+                         BindingResult bindingResult,
+                         Model model,
+                         Principal principal) {
 
-        AppUser user = appUserRepository.findByUsername(principal.getName()).orElseThrow();
-        review.setUser(user);
-
-        Movie movie = movieRepository.findById(review.getMovie().getId()).orElseThrow();
-        review.setMovie(movie);
-
-        reviewRepository.save(review);
-        return "redirect:/movies/" + review.getMovie().getId();
+    if (bindingResult.hasErrors()) {
+        model.addAttribute("movie", review.getMovie());
+        return "review-form";
     }
+
+    if (principal == null) {
+        throw new RuntimeException("Principal is null. User is not logged in.");
+    }
+
+    if (review.getMovie() == null || review.getMovie().getId() == null) {
+        throw new RuntimeException("Review movie or movie id is null.");
+    }
+
+    AppUser user = appUserRepository.findByUsername(principal.getName())
+            .orElseThrow(() -> new RuntimeException("User not found in AppUser table: " + principal.getName()));
+
+    Movie movie = movieRepository.findById(review.getMovie().getId())
+            .orElseThrow(() -> new RuntimeException("Movie not found with id: " + review.getMovie().getId()));
+
+    review.setUser(user);
+    review.setMovie(movie);
+
+    reviewRepository.save(review);
+
+    return "redirect:/movies/" + movie.getId();
+}
 }

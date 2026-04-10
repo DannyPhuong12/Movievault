@@ -1,9 +1,17 @@
 package com.example.movievault.domain;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Movie {
@@ -12,17 +20,30 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String title;
-    private String director;
-    private Integer year;
 
-    public Movie(String interstellar, String christopher_Nolan, int par, Genre drama) {
+    @NotBlank
+    private String director;
+
+    @Min(1888)
+    @Max(2100)
+    private Integer releaseYear;
+
+    @ManyToOne
+    private Genre genre;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    private List<Review> reviews;
+
+    public Movie() {
     }
 
-    public Movie(String title, String director, Integer year) {
+    public Movie(String title, String director, Integer releaseYear, Genre genre) {
         this.title = title;
         this.director = director;
-        this.year = year;
+        this.releaseYear = releaseYear;
+        this.genre = genre;
     }
 
     public Long getId() {
@@ -45,11 +66,27 @@ public class Movie {
         this.director = director;
     }
 
-    public Integer getYear() {
-        return year;
+    public Integer getReleaseYear() {
+        return releaseYear;
     }
 
-    public void setYear(Integer year) {
-        this.year = year;
+    public void setReleaseYear(Integer releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public Genre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }
