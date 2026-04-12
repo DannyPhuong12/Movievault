@@ -6,26 +6,25 @@
 <body>
 
 <h1>Add Review</h1>
-<h2 th:text="${movie.title}">Movie</h2>
 
-<form th:action="@{/reviews/save}" th:object="${review}" method="post">
+<h2 th:text="${movie.title}">Movie Title</h2>
 
-    <input type="hidden" th:field="*{id}">
-    <input type="hidden" th:field="*{movie.id}">
+<form th:action="@{/movies/{movieId}/reviews/add(movieId=${movie.id})}" th:object="${review}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
     <div>
-        <label>Rating (1-5)</label>
-        <input type="number" th:field="*{rating}">
-        <div th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
+        <label for="rating">Rating (1-5)</label><br>
+        <input id="rating" type="number" th:field="*{rating}" min="1" max="5" required>
     </div>
 
     <div>
-        <label>Comment</label>
-        <textarea th:field="*{comment}"></textarea>
-        <div th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
+        <label for="comment">Comment</label><br>
+        <textarea id="comment" th:field="*{comment}" rows="4" cols="40"></textarea>
     </div>
 
-    <button type="submit">Save review</button>
+    <div>
+        <button type="submit">Save review</button>
+    </div>
 </form>
 
 <br>

@@ -36,9 +36,10 @@ public class ReviewController {
 
     @GetMapping("/movies/{movieId}/reviews/add")
     public String showAddReviewForm(@PathVariable("movieId") Long movieId, Model model) {
-        Movie movie = movieRepository.findById(movieId).orElseThrow();
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new RuntimeException("Movie not found with id: " + movieId));
+
         Review review = new Review();
-        review.setMovie(movie);
 
         model.addAttribute("review", review);
         model.addAttribute("movie", movie);
@@ -46,36 +47,33 @@ public class ReviewController {
         return "review-form";
     }
 
-    @PostMapping("/reviews/save")
-public String saveReview(@Valid @ModelAttribute("review") Review review,
-                         BindingResult bindingResult,
-                         Model model,
-                         Principal principal) {
+    @PostMapping("/movies/{movieId}/reviews/add")
+    public String saveReview(@PathVariable("movieId") Long movieId,
+                             @Valid @ModelAttribute("review") Review review,
+                             BindingResult bindingResult,
+                             Model model,
+                             Principal principal) {
 
-    if (bindingResult.hasErrors()) {
-        model.addAttribute("movie", review.getMovie());
-        return "review-form";
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new RuntimeException("Movie not found with id: " + movieId));
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("movie", movie);
+            return "review-form";
+        }
+
+        if (principal == null) {
+            throw new RuntimeException("User is not logged in.");
+        }
+
+        AppUser user = appUserRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found: " + principal.getName()));
+
+        review.setMovie(movie);
+        review.setUser(user);
+
+        reviewRepository.save(review);
+
+        return "redirect:/movies/" + movieId;
     }
-
-    if (principal == null) {
-        throw new RuntimeException("Principal is null. User is not logged in.");
-    }
-
-    if (review.getMovie() == null || review.getMovie().getId() == null) {
-        throw new RuntimeException("Review movie or movie id is null.");
-    }
-
-    AppUser user = appUserRepository.findByUsername(principal.getName())
-            .orElseThrow(() -> new RuntimeException("User not found in AppUser table: " + principal.getName()));
-
-    Movie movie = movieRepository.findById(review.getMovie().getId())
-            .orElseThrow(() -> new RuntimeException("Movie not found with id: " + review.getMovie().getId()));
-
-    review.setUser(user);
-    review.setMovie(movie);
-
-    reviewRepository.save(review);
-
-    return "redirect:/movies/" + movie.getId();
-}
 }

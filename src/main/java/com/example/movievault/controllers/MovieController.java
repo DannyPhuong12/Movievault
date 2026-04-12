@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.movievault.domain.Genre;
 import com.example.movievault.domain.Movie;
 import com.example.movievault.repository.GenreRepository;
 import com.example.movievault.repository.MovieRepository;
@@ -22,8 +21,7 @@ public class MovieController {
     private final MovieRepository movieRepository;
     private final GenreRepository genreRepository;
     private final ReviewRepository reviewRepository;
-    private Genre drama;
-
+    
     public MovieController(MovieRepository movieRepository,
                            GenreRepository genreRepository,
                            ReviewRepository reviewRepository) {
@@ -43,12 +41,13 @@ public class MovieController {
         return "movie-list";
     }
 
+  
     @GetMapping("/movies/add")
     public String showAddMovieForm(Model model) {
-        model.addAttribute("movie", new Movie("Interstellar", "Christopher Nolan", 2014, drama));
-        model.addAttribute("genres", genreRepository.findAll());
-        return "movie-form";
-    }
+    model.addAttribute("movie", new Movie());
+    model.addAttribute("genres", genreRepository.findAll());
+    return "movie-form";
+}
 
     @GetMapping("/movies/edit/{id}")
     public String editMovie(@PathVariable("id") Long id, Model model) {
