@@ -18,13 +18,20 @@ public class SecurityConfig {
         http
     .authorizeHttpRequests(auth -> auth
     .requestMatchers("/", "/movies", "/genres", "/css/**").permitAll()
-    .requestMatchers("/h2-console/**").permitAll()
     .requestMatchers("/movies/*").permitAll()
-    .requestMatchers("/movies/add", "/movies/save", "/movies/edit/**", "/movies/delete/**").hasAnyRole("USER", "ADMIN")
+    .requestMatchers("/h2-console/**").permitAll()
+
+    .requestMatchers("/movies/add", "/movies/save").hasAnyRole("USER", "ADMIN")
+    .requestMatchers("/movies/edit/**").hasAnyRole("USER", "ADMIN")
+    .requestMatchers("/movies/delete/**").hasRole("ADMIN")
+
     .requestMatchers("/movies/*/reviews/add", "/reviews/save").hasAnyRole("USER", "ADMIN")
+
     .requestMatchers("/genres/add", "/genres/save", "/genres/edit/**", "/genres/delete/**").hasRole("ADMIN")
+
     .anyRequest().authenticated()
 )
+
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/h2-console/**"))
             .headers(headers -> headers

@@ -1,24 +1,41 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Add Genre</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    <div class="container">
 
-<h1>Add Genre</h1>
+        <div class="nav">
+            <div>
+                <a href="/movies">Movies</a>
+                <a href="/genres">Genres</a>
+            </div>
 
-<form th:action="@{/genres/save}" th:object="${genre}" method="post">
+            <div>
+                <a sec:authorize="isAuthenticated()" href="/logout">Logout</a>
+                <a sec:authorize="!isAuthenticated()" href="/login">Login</a>
+            </div>
+        </div>
 
-    <div>
-        <label>Name</label>
-        <input type="text" th:field="*{name}">
+        <h1>Add Genre</h1>
+
+        <form th:action="@{/genres/save}" th:object="${genre}" method="post">
+            <input type="hidden" th:field="*{id}">
+
+            <div>
+                <label>Name</label>
+                <input type="text" th:field="*{name}">
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="button">Save</button>
+                <a href="/genres" class="button">Back to genre list</a>
+            </div>
+        </form>
+
     </div>
-
-    <button type="submit">Save</button>
-</form>
-
-<br>
-<a href="/genres">Back to genre list</a>
-
 </body>
 </html>

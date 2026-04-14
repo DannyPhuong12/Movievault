@@ -1,53 +1,72 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Movie Details</title>
+    <title th:text="${movie.title}">Movie Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    <div class="container">
 
-<h1 th:text="${movie.title}">Movie Title</h1>
+        <div class="nav">
+            <div>
+                <a href="/movies" th:text="#{nav.movies}">Movies</a>
+                <a href="/genres" th:text="#{nav.genres}">Genres</a>
+            </div>
+            <div>
+                <a th:href="@{/movies(lang='fi')}" th:text="#{lang.fi}">Suomi</a>
+                <a th:href="@{/movies(lang='en')}" th:text="#{lang.en}">English</a>
+                <a sec:authorize="isAuthenticated()" href="/logout">Logout</a>
+                <a sec:authorize="!isAuthenticated()" href="/login">Login</a>
+            </div>
+        </div>
 
-<p>
-    <strong>Director:</strong>
-    <span th:text="${movie.director}"></span>
-</p>
+        <h1 th:text="${movie.title}">Movie Title</h1>
 
-<p>
-    <strong>Year:</strong>
-    <span th:text="${movie.releaseYear}"></span>
-</p>
+        <table>
+            <tr>
+                <th>Director</th>
+                <td th:text="${movie.director}"></td>
+            </tr>
+            <tr>
+                <th>Year</th>
+                <td th:text="${movie.releaseYear}"></td>
+            </tr>
+            <tr>
+                <th>Genre</th>
+                <td th:text="${movie.genre != null ? movie.genre.name : 'N/A'}"></td>
+            </tr>
+        </table>
 
-<p>
-    <strong>Genre:</strong>
-    <span th:text="${movie.genre.name}"></span>
-</p>
+        <h2>Reviews</h2>
 
-<hr>
+        <div th:if="${#lists.isEmpty(reviews)}">
+            <p>No reviews yet.</p>
+        </div>
 
-<h2>Reviews</h2>
+        <table th:unless="${#lists.isEmpty(reviews)}">
+            <tr>
+                <th>User</th>
+                <th>Rating</th>
+                <th>Comment</th>
+            </tr>
+            <tr th:each="review : ${reviews}">
+                <td th:text="${review.user.username}"></td>
+                <td th:text="${review.rating}"></td>
+                <td th:text="${review.comment}"></td>
+            </tr>
+        </table>
 
-<table border="1">
-    <tr>
-        <th>User</th>
-        <th>Rating</th>
-        <th>Comment</th>
-    </tr>
+        <div class="actions">
+            <a th:href="@{/movies/{id}/reviews/add(id=${movie.id})}"
+               class="button"
+               sec:authorize="isAuthenticated()">Add Review</a>
+            <a th:href="@{/movies/edit/{id}(id=${movie.id})}"
+               class="button"
+               sec:authorize="hasRole('ADMIN')">Edit Movie</a>
+            <a href="/movies" class="button">Back to movies</a>
+        </div>
 
-    <tr th:each="review : ${reviews}">
-        <td>
-            <span th:if="${review.user != null}" th:text="${review.user.username}">username</span>
-            <span th:if="${review.user == null}">Unknown user</span>
-        </td>
-        <td th:text="${review.rating}">5</td>
-        <td th:text="${review.comment}">Great movie!</td>
-    </tr>
-</table>
-
-<br>
-<a th:href="@{/movies/{id}/reviews/add(id=${movie.id})}">Add Review</a>
-
-<br><br>
-<a href="/movies">Back to movie list</a>
-
+    </div>
 </body>
 </html>

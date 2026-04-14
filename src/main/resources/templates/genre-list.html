@@ -1,30 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title th:text="#{genre.list.title}">Genres</title>
+    <title>Genres</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+    <div class="container">
 
-<a th:href="@{/genres(lang='fi')}" th:text="#{lang.fi}">Suomi</a> |
-<a th:href="@{/genres(lang='en')}" th:text="#{lang.en}">English</a>
+        <div class="nav">
+            <div>
+                <a href="/movies">Movies</a>
+                <a href="/genres">Genres</a>
+            </div>
+            <div>
+                <a th:href="@{/movies(lang='fi')}" th:text="#{lang.fi}">Suomi</a>
+                <a th:href="@{/movies(lang='en')}" th:text="#{lang.en}">English</a>
+                <a sec:authorize="isAuthenticated()" href="/logout">Logout</a>
+                <a sec:authorize="!isAuthenticated()" href="/login">Login</a>
+            </div>
+        </div>
 
-<h1 th:text="#{genre.list.title}">Genre List</h1>
+        <h1>Genres</h1>
 
-<a href="/genres/add" th:text="#{genre.add}">Add genre</a>
+        <a href="/genres/add" class="button" sec:authorize="hasRole('ADMIN')">Add Genre</a>
 
-<table border="1">
-    <tr th:each="genre : ${genres}">
-    <td>
-        <a th:href="@{/genres/{id}/movies(id=${genre.id})}"
-           th:text="${genre.name}">Genre</a>
-    </td>
-    <td><a th:href="@{/genres/edit/{id}(id=${genre.id})}">Edit</a></td>
-    <td><a th:href="@{/genres/delete/{id}(id=${genre.id})}">Delete</a></td>
-</tr>
-</table>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th sec:authorize="hasRole('ADMIN')">Edit</th>
+                <th sec:authorize="hasRole('ADMIN')">Delete</th>
+            </tr>
 
-<br>
-<a href="/movies" th:text="#{nav.movies}">Movies</a>
+            <tr th:each="genre : ${genres}">
+                <td>
+                    <a th:href="@{/genres/{id}/movies(id=${genre.id})}" th:text="${genre.name}"></a>
+                </td>
+                <td sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/genres/edit/{id}(id=${genre.id})}">Edit</a>
+                </td>
+                <td sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/genres/delete/{id}(id=${genre.id})}">Delete</a>
+                </td>
+            </tr>
+        </table>
 
+        <div class="actions">
+            <a href="/movies" class="button">Back to movies</a>
+        </div>
+
+    </div>
 </body>
 </html>

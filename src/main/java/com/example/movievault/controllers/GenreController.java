@@ -9,14 +9,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.movievault.domain.Genre;
 import com.example.movievault.repository.GenreRepository;
+import com.example.movievault.repository.MovieRepository;
 
 @Controller
 public class GenreController {
 
     private final GenreRepository genreRepository;
+    private final MovieRepository movieRepository;
 
-    public GenreController(GenreRepository genreRepository) {
+    public GenreController(GenreRepository genreRepository, MovieRepository movieRepository) {
         this.genreRepository = genreRepository;
+        this.movieRepository = movieRepository;
     }
 
     @GetMapping("/genres")
@@ -45,7 +48,12 @@ public class GenreController {
 
     @GetMapping("/genres/delete/{id}")
     public String deleteGenre(@PathVariable("id") Long id) {
-        genreRepository.deleteById(id);
-        return "redirect:/genres";
-    }
+    Genre genre = genreRepository.findById(id).orElseThrow();
+    genre.getMovies().forEach(movie -> {
+        movie.setGenre(null);
+        movieRepository.save(movie);
+    });
+    genreRepository.deleteById(id);
+    return "redirect:/genres";
+}
 }

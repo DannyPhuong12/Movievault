@@ -1,43 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Movies</title>
+    <title th:text="#{movie.list.title}">Movies</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
     <div class="container">
+
         <div class="nav">
-            <a href="/movies">Movies</a>
-            <a href="/genres">Genres</a>
+            <div>
+                <a href="/movies" th:text="#{nav.movies}">Movies</a>
+                <a href="/genres" th:text="#{nav.genres}">Genres</a>
+            </div>
+            <div>
+                <a th:href="@{/movies(lang='fi')}" th:text="#{lang.fi}">Suomi</a>
+                <a th:href="@{/movies(lang='en')}" th:text="#{lang.en}">English</a>
+                <a sec:authorize="isAuthenticated()" href="/logout">Logout</a>
+                <a sec:authorize="!isAuthenticated()" href="/login">Login</a>
+            </div>
         </div>
 
-        <h1>Movie List</h1>
+        <h1 th:if="${genreName == null}" th:text="#{movie.list.title}">Movie List</h1>
+        <h1 th:if="${genreName != null}" th:text="'Movies in genre: ' + ${genreName}">Movies in genre</h1>
 
         <div class="actions">
-            <a href="/movies/add" class="button">Add new movie</a>
+            <a href="/movies/add" class="button"
+               sec:authorize="hasAnyRole('USER','ADMIN')"
+               th:text="#{movie.add}">Add new movie</a>
         </div>
 
         <table>
             <tr>
-                <th>Title</th>
-                <th>Director</th>
-                <th>Year</th>
-                <th>Genre</th>
-                <th>Details</th>
-                <th>Edit</th>
-                <th>Delete</th>
+                <th th:text="#{movie.title}">Title</th>
+                <th th:text="#{movie.director}">Director</th>
+                <th th:text="#{movie.year}">Year</th>
+                <th th:text="#{movie.genre}">Genre</th>
+                <th th:text="#{movie.details}">Details</th>
+                <th sec:authorize="hasRole('ADMIN')" th:text="#{button.edit}">Edit</th>
+                <th sec:authorize="hasRole('ADMIN')" th:text="#{button.delete}">Delete</th>
             </tr>
 
             <tr th:each="movie : ${movies}">
                 <td th:text="${movie.title}"></td>
                 <td th:text="${movie.director}"></td>
                 <td th:text="${movie.releaseYear}"></td>
-                <td th:text="${movie.genre.name}"></td>
-                <td><a th:href="@{/movies/{id}(id=${movie.id})}">Details</a></td>
-                <td><a th:href="@{/movies/edit/{id}(id=${movie.id})}">Edit</a></td>
-                <td><a th:href="@{/movies/delete/{id}(id=${movie.id})}" class="button button-danger">Delete</a></td>
+                <td th:text="${movie.genre != null ? movie.genre.name : 'N/A'}"></td>
+                <td>
+                    <a th:href="@{/movies/{id}(id=${movie.id})}" th:text="#{movie.details}">Details</a>
+                </td>
+                <td sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/movies/edit/{id}(id=${movie.id})}" th:text="#{button.edit}">Edit</a>
+                </td>
+                <td sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/movies/delete/{id}(id=${movie.id})}" th:text="#{button.delete}">Delete</a>
+                </td>
             </tr>
         </table>
+
+        <div class="actions">
+            <a href="/movies" class="button" th:text="#{nav.movies}">All movies</a>
+            <a href="/genres" class="button" th:text="#{nav.genres}">Genres</a>
+        </div>
+
     </div>
 </body>
 </html>
